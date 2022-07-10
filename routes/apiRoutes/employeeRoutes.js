@@ -4,10 +4,22 @@ const db = require('../../db/connection');
 
 // gets employee id, first and last name, and role
 router.get('/employee', (req, res) => {
-    const sql = `SELECT employees.id, employees.first_name, employees.last_name, employees.manager_id,
-    employee_role.title AS job_title FROM employees
-    LEFT JOIN employee_role
-    ON employees.employee_role_id = employee_role.id;`;
+    const sql = `SELECT
+                employee.id,
+                employee.first_name ,
+                employee.last_name,
+                CONCAT(manager.first_name, ' ' , manager.last_name) as manager,
+                employee_role.title AS job_title,
+                employee_role.salary AS salary,
+                departments.department_name AS department  
+                FROM employees employee
+                LEFT OUTER JOIN employees manager
+                ON employee.manager_id = manager.id
+                LEFT JOIN employee_role
+                ON employee.employee_role_id = employee_role.id
+                JOIN departments
+                ON employee_role.department_id = departments.id
+                ORDER BY employee.id ASC;`;
     db.query(sql, (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });

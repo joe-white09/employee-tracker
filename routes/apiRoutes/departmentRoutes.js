@@ -5,7 +5,7 @@ const db = require('../../db/connection');
 
 // shows all department names
 router.get('/department', (req, res) => {
-    const sql = `select department_name from department;`;
+    const sql = `select department_name from departments;`;
     db.query(sql, (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -38,7 +38,7 @@ router.get('/department/:id', (req, res) => {
 });
 
 router.post('/department', ({ body }, res) => {
-    const sql = `INSERT INTO department (department_name) VALUES(?);`;
+    const sql = `INSERT INTO departments (department_name) VALUES(?);`;
     const params = [
         body.department_name
     ];

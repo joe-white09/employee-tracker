@@ -4,10 +4,10 @@ const db = require('../../db/connection');
 
 // gets employee id, first and last name, and role
 router.get('/employee', (req, res) => {
-    const sql = `SELECT Employees.id, Employees.first_name, Employees.last_name, Employees.manager_id,
-    employee_role.title AS job_title FROM Employees
+    const sql = `SELECT employees.id, employees.first_name, employees.last_name, employees.manager_id,
+    employee_role.title AS job_title FROM employees
     LEFT JOIN employee_role
-    ON Employees.employee_role_id = employee_role.id;`;
+    ON employees.employee_role_id = employee_role.id;`;
     db.query(sql, (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });
@@ -23,15 +23,25 @@ router.get('/employee', (req, res) => {
 // get employees by manager
 router.get('/employee/:id', (req, res) => {
     const sql = `SELECT
-    employee.Id,
-        employee.first_name,
-        employee.manager_id,
-        manager.first_name as ManagerName
-FROM Employees employee
-LEFT OUTER JOIN Employees manager
-ON employee.manager_id = manager.id;`;
-    const params = []
-})
+        employee.id,
+        CONCAT(employee.first_name , ' ' , employee.last_name) as employee_name,
+        CONCAT(manager.first_name , ' ' , manager.last_name) as manager_name
+        FROM employees employee
+        LEFT OUTER JOIN employees manager
+        ON employee.manager_id = manager.id;`;
+    const params = [req.params.id];
+
+    db.query(sql, params, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: rows
+        });
+    });
+});
 
 // create a new employee
 router.post('/employee', ({ body }, res) => {

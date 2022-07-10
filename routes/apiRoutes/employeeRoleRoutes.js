@@ -1,9 +1,7 @@
-const express = require('express');
-const router = express.Router();
 const db = require('../../db/connection');
 
 // get all roles
-router.get('/role', (req, res) => {
+const getRoles = () => {
     const sql = `SELECT
                 employee_role.title, 
                 employee_role.id as role_id, 
@@ -17,15 +15,12 @@ router.get('/role', (req, res) => {
             res.status(500).json({ error: err.message });
             return;
         }
-        res.json({
-            message: 'success',
-            data: rows
-        });
+        console.table(rows);
     });
-});
+};
 
 // create a new role
-router.post('/role', ({ body }, res) => {
+const createRole = () => {
     const sql = `INSERT INTO employee_role (title, salary, department_id) VALUES(?,?,?);`;
     const params = [
         body.title,
@@ -43,8 +38,8 @@ router.post('/role', ({ body }, res) => {
             data: body
         });
     });
-});
+};
 
 
 
-module.exports = router;
+module.exports = {getRoles, createRole};

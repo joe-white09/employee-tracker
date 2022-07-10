@@ -42,6 +42,29 @@ router.post('/employee', ({ body }, res) => {
     });
 });
 
+router.put('/employee/:id', (req, res) => {
+    const sql = `UPDATE employee SET manager_id = ?
+                WHERE id = ?;`;
+    const params = [req.body.manager_id, req.params.id];
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        } else if (!result.affectedRows) {
+            res.json({ 
+                message: 'Employee not found'
+            });
+        } else {
+        res.json({
+            message: 'success',
+            data: req.body,
+            changes: result.affectedRows
+            });
+        }
+    });
+});
+
 
 
 module.exports = router;

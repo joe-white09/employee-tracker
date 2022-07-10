@@ -22,7 +22,5 @@ CREATE TABLE employee(
     employee_role_id INTEGER,
     CONSTRAINT fk_employee_role FOREIGN KEY (employee_role_id) REFERENCES employee_role(id),
     manager_id INTEGER,
-    INDEX manager_ind (manager_id),
     CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL
-    
 )

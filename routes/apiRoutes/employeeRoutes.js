@@ -2,22 +2,45 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../db/connection');
 
-
+// gets employee id, first and last name, and role
 router.get('/employee', (req, res) => {
-    const sql = `SELECT employee.id, employee.first_name, employee.last_name,
+    const sql = `SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id,
     employee_role.title AS job_title FROM employee
-    employee.first_name AS manager from employee
     LEFT JOIN employee_role
-    ON employee.employee_role_id = employee_role.id
-    LEFT JOIN employee
-    ON employee.manager_id = employee.manager_id;`
+    ON employee.employee_role_id = employee_role.id;`;
+    db.query(sql, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+            res.json({
+                message: 'sucess',
+                data: rows
+        });
+    });
 });
-// // gets first and last name with role title
-select employee.first_name, employee.last_name, employee_role.title as title
-from employee
-left join employee_role
-on employee.employee_role_id = employee_role.id;
 
+// create a new employee
+router.post('/employee', ({ body }, res) => {
+    const sql = `INSERT INTO employee (first_name, last_name, employee_role_id, manager_id) VALUES(?,?,?,?);`;
+    const params = [
+        body.first_name,
+        body.last_name,
+        body.employee_role_id,
+        body.manager_id
+    ];
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: body
+        });
+    });
+});
 
 
 
